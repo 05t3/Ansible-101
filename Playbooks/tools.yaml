@@ -1,0 +1,31 @@
+---
+- hosts: master
+  become: yes
+  tasks:
+    - name: Installing Basic Tools
+      apt:
+        name:
+          - git
+          - vim
+          - nano
+          - net-tools
+          - mlocate
+          - zip
+          - unzip
+          - htop
+          - curl
+- hosts: nodes
+  become: yes
+  tasks:
+    - name: Installing Basic Tools
+      apt:
+        name:
+          - git
+          - vim
+          - nano
+          - net-tools
+          - mlocate
+          - zip
+          - unzip
+          - htop
+          - curl

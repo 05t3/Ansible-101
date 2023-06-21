@@ -1,0 +1,103 @@
+---
+- hosts: master
+  become: yes
+  tasks:
+
+    # Install Python pip
+    - name: Ensure pip is installed
+      apt:
+        name: python3-pip
+        state: present
+
+    # Install required Python modules
+    - name: Ensure PyMySQL is installed
+      ansible.builtin.pip:
+        name: pymysql
+        state: present
+  
+    # Update package lists and install required packages
+    - name: Update package lists and install required packages
+      apt:
+        name:
+          - apache2
+          - mysql-server
+          - php
+          - php-mysql
+          - libapache2-mod-php
+          - php-cli
+        state: present
+
+    # Start and enable Apache and MySQL
+    - name: Start and enable Apache
+      systemd:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Start and enable MySQL
+      systemd:
+        name: mysql
+        state: started
+        enabled: yes
+
+
+    # Create a MySQL database for WordPress
+    - name: Create a MySQL database for WordPress
+      mysql_db:
+        login_user: root
+        login_password: 'ne.11.88'
+        name: wordpress
+        state: present
+
+    # Set up WordPress database user
+    - name: Create WordPress user
+      mysql_user:
+        login_user: root
+        login_password: 'ne.11.88'
+        name: wordpressuser
+        password: userpassword
+        priv: 'wordpress.*:ALL'
+        state: present
+
+    # Download WordPress
+    - name: Download WordPress
+      get_url:
+        url: https://wordpress.org/latest.tar.gz
+        dest: /tmp/wordpress.tar.gz
+
+    # Extract WordPress
+    - name: Extract WordPress
+      unarchive:
+        src: /tmp/wordpress.tar.gz
+        dest: /var/www/html/
+        remote_src: yes
+
+    # Set permissions for WordPress directory
+    - name: Set permissions for WordPress directory
+      file:
+        path: /var/www/html/wordpress
+        state: directory
+        owner: www-data
+        group: www-data
+        recurse: yes
+
+    # Copy WordPress sample configuration file
+    - name: Copy WordPress sample configuration file
+      command: cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php
+
+    # Update WordPress configuration file with database settings
+    - name: Update WordPress configuration file with database settings
+      lineinfile:
+        path: /var/www/html/wordpress/wp-config.php
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      loop:
+        - { regexp: "define\\('DB_NAME', 'database_name_here'\\);", line: "define('DB_NAME', 'wordpress');" }
+        - { regexp: "define\\('DB_USER', 'username_here'\\);", line: "define('DB_USER', 'wordpressuser');" }
+        - { regexp: "define\\('DB_PASSWORD', 'password_here'\\);", line: "define('DB_PASSWORD', 'userpassword');" }
+
+    # Restart Apache to apply changes
+    - name: Restart Apache
+      systemd:
+        name: apache2
+        state: restarted

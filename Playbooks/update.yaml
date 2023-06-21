@@ -1,0 +1,17 @@
+---
+- name: Update, Upgrade, and Purge Unused Packages on Ubuntu Servers
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update the apt package index
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Upgrade all packages to the latest version
+      ansible.builtin.apt:
+        upgrade: dist
+
+    - name: Purge unused packages
+      ansible.builtin.apt:
+        autoremove: yes
+        purge: yes

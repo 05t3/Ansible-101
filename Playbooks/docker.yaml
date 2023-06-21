@@ -1,0 +1,81 @@
+---
+- hosts: master
+  become: yes
+  tasks:
+
+    # Update package lists
+    - name: Update package lists
+      apt:
+        update_cache: yes
+
+    # Install required packages
+    - name: Install required packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+
+    # Add Docker repository GPG key
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    # Add Docker repository
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+        state: present
+
+    # Update package lists (again)
+    - name: Update package lists
+      apt:
+        update_cache: yes
+
+    # Install Docker
+    - name: Install Docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+
+    # Install Docker Compose
+    - name: Download Docker Compose
+      get_url:
+        url: "https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-darwin-x86_64"
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    # Enable and start Docker
+    - name: Enable Docker service
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+    # Ensure pip is installed (needed to install Docker SDK)
+    - name: Ensure pip is installed
+      ansible.builtin.package:
+        name: python3-pip
+        state: present
+    # Install Docker SDK for Python
+    - name: Install Docker SDK for Python
+      ansible.builtin.pip:
+        name: docker
+        state: present
+    # Run Portainer CE
+    - name: Run Portainer CE container
+      ansible.builtin.docker_container:
+        name: portainer
+        image: portainer/portainer-ce
+        state: started
+        restart_policy: always
+        ports:
+          - "9000:9000"
+        volumes:
+          - "/var/run/docker.sock:/var/run/docker.sock"
+          - "portainer_data:/data"

@@ -1,0 +1,10 @@
+---
+- hosts: master
+  become: yes
+  tasks:
+    - name: Removing Package
+      apt:
+        name:
+          - git
+          - mlocate
+        state: absent
