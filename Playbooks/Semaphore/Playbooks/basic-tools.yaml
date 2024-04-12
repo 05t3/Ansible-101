@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: true  # Using 'true' is the standard way to denote Boolean values in YAML
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 86400  # Optional: this line makes sure the cache is only updated if older than a day
+
+    - name: Installing Basic Tools
+      apt:
+        name:
+          - git
+          - vim
+          - nano
+          - net-tools
+          - mlocate
+          - zip
+          - unzip
+          - htop
+          - curl
+          - tmux
+        state: present  # Ensures the packages are installed, can be changed to 'latest' to ensure the latest version
