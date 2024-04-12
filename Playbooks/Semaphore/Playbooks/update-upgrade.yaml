@@ -1,0 +1,27 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        update_cache: yes
+        upgrade: 'dist'
+      register: update
+      until: update is succeeded
+      retries: 3
+      delay: 5
+
+    - name: Clean up unnecessary packages
+      apt:
+        autoremove: yes
+        autoclean: yes
+      when: update.changed
+
+    - name: Check if a reboot is needed
+      stat:
+        path: /var/run/reboot-required
+      register: reboot_required
+
+    - name: Reboot the machine if required
+      reboot:
+      when: reboot_required.stat.exists
