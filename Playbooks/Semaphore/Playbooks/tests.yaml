@@ -1,0 +1,22 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Check and remove stale APT locks
+      become: true
+      shell: |
+        if sudo lsof /var/lib/dpkg/lock; then
+          echo "DPKG lock is active. Checking which process..."
+        else
+          echo "No DPKG lock detected. Removing stale locks if any."
+          sudo rm -f /var/lib/apt/lists/lock
+          sudo rm -f /var/cache/apt/archives/lock
+          sudo rm -f /var/lib/dpkg/lock
+        fi
+      ignore_errors: true
+
+    - name: Update and upgrade apt packages
+      apt:
+        update_cache: yes
+        upgrade: 'dist'
+        cache_valid_time: 3600
