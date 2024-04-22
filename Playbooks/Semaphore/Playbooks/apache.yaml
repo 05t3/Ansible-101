@@ -1,0 +1,23 @@
+---
+- name: Install and start Apache
+  hosts: your_webserver_group
+  become: yes  # Use sudo for privilege escalation
+  tasks:
+    - name: Install Apache web server
+      ansible.builtin.apt:
+        name: apache2  # The package name for Apache on Ubuntu/Debian systems
+        state: present  # Ensure it is installed
+        update_cache: yes  # Update the repository cache before installing
+
+    - name: Start Apache service
+      ansible.builtin.service:
+        name: apache2  # The service name for Apache on Ubuntu/Debian systems
+        state: started  # Ensure the service is started
+        enabled: yes  # Ensure the service is enabled on boot
+
+    - name: Check Apache service status
+      ansible.builtin.service_facts:
+      
+    - name: Display Apache service status
+      ansible.builtin.debug:
+        var: ansible_facts.services["apache2.service"].state
