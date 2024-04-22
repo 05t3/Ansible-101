@@ -1,7 +1,6 @@
 ---
 - name: Update and upgrade all Ubuntu servers
   hosts: vagrant
-  become_user: semaphore
   become: yes
   tasks:
     - name: Ensure the apt cache is updated
@@ -12,7 +11,6 @@
     - name: Upgrade all packages to the latest version
       ansible.builtin.apt:
         upgrade: yes
-      become: true 
 
     - name: Remove unnecessary packages and dependencies
       ansible.builtin.apt:
