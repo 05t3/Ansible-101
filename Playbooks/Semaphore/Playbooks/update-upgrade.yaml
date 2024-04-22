@@ -1,7 +1,7 @@
 ---
 - name: Update and upgrade all Ubuntu servers
   hosts: vagrant
-  remote_user: semaphore
+  become_user: semaphore
   become: yes
   tasks:
     - name: Ensure the apt cache is updated
