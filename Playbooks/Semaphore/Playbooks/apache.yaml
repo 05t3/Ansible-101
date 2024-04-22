@@ -1,6 +1,6 @@
 ---
 - name: Install and start Apache
-  hosts: your_webserver_group
+  hosts: vagrant
   become: yes  # Use sudo for privilege escalation
   tasks:
     - name: Install Apache web server
