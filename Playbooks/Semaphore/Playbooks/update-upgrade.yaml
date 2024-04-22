@@ -1,27 +1,27 @@
 ---
-- hosts: all
-  become: true
+- name: Update and upgrade all Ubuntu servers
+  hosts: all
+  become: yes
   tasks:
-    - name: Update and upgrade apt packages
-      apt:
+    - name: Ensure the apt cache is updated
+      ansible.builtin.apt:
         update_cache: yes
-        upgrade: 'dist'
-      register: update
-      until: update is succeeded
-      retries: 3
-      delay: 5
+        cache_valid_time: 3600 # Cache is considered valid for 1 hour
 
-    - name: Clean up unnecessary packages
-      apt:
+    - name: Upgrade all packages to the latest version
+      ansible.builtin.apt:
+        upgrade: dist
+
+    - name: Remove unnecessary packages and dependencies
+      ansible.builtin.apt:
         autoremove: yes
+        purge: yes
+
+    - name: Clean up the apt cache
+      ansible.builtin.apt:
         autoclean: yes
-      when: update.changed
 
-    - name: Check if a reboot is needed
-      stat:
-        path: /var/run/reboot-required
-      register: reboot_required
-
-    - name: Reboot the machine if required
-      reboot:
-      when: reboot_required.stat.exists
+    - name: Reboot the machine if needed
+      ansible.builtin.reboot:
+        msg: "Rebooting for system updates"
+        reboot_timeout: 600 # 10 minutes timeout for the reboot
