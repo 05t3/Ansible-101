@@ -2,8 +2,6 @@
 - name: Create a new system user with SSH access
   hosts: test
   become: yes  # Use sudo for privilege escalation
-  vars_files:
-    - user.yml  # Include external variable file here
 
   tasks:
     - name: Create a new user with a home directory and bash shell
