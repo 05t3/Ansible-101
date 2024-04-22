@@ -1,0 +1,23 @@
+---
+- name: Install and start Nginx
+  hosts: your_webserver_group
+  become: yes  # Use sudo for privilege escalation
+  tasks:
+    - name: Install Nginx
+      ansible.builtin.apt:
+        name: nginx  # The package name for Nginx
+        state: present  # Ensure it is installed
+        update_cache: yes  # Update the repository cache before installing
+
+    - name: Start Nginx service and enable on boot
+      ansible.builtin.service:
+        name: nginx  # The service name for Nginx
+        state: started  # Ensure the service is started
+        enabled: yes  # Ensure the service is enabled on boot
+
+    - name: Check Nginx service status
+      ansible.builtin.service_facts:
+
+    - name: Display Nginx service status
+      ansible.builtin.debug:
+        var: ansible_facts.services["nginx.service"].state
