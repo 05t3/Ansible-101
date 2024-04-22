@@ -1,25 +1,31 @@
 ---
-- name: Install and configure pdtm using Go
-  hosts: dev
-  become: yes  # You may not need 'become' for the go install command
+- name: Install multiple Go tools
+  hosts: all
+  become: no  # Typically not required for 'go install'
   vars:
-    go_package: "github.com/projectdiscovery/pdtm/cmd/pdtm@latest"
-    go_bin_path: "/usr/local/go/bin"  # Adjust if you have a custom location for Go binaries
+    go_packages:
+      - "github.com/projectdiscovery/pdtm/cmd/pdtm@latest"
+      - "github.com/tomnomnom/anew@latest"
+      - "github.com/tomnomnom/gron@latest"
+      - "github.com/d3mondev/puredns/v2@latest"
+      - "github.com/hueristiq/xurlfind3r/cmd/xurlfind3r@latest"
+      - "github.com/owasp-amass/amass/v4/...@master"
+      - "github.com/ffuf/ffuf/v2@latest"
+      - "github.com/hakluke/hakrawler@latest"
+      - "github.com/OJ/gobuster/v3@latest"
+      - "github.com/tomnomnom/assetfinder@latest"
+      - "github.com/lc/gau/v2/cmd/gau@latest"
+      - "github.com/tomnomnom/waybackurls@latest"
+      - "github.com/jaeles-project/gospider@latest"
+      - "github.com/dwisiswant0/cf-check@latest"
+      - "github.com/devanshbatham/realm@v0.0.2"
+      - "github.com/channyein1337/jsleak@latest"
+      - "github.com/LukaSikic/subzy@latest"
+    go_bin_path: "/usr/local/go/bin"  # Adjust if Go is installed in a different location
 
   tasks:
-    - name: Install pdtm using go install
-      ansible.builtin.command:
-        cmd: "{{ go_bin_path }}/go install -v {{ go_package }}"
-        environment:
-          PATH: "{{ ansible_env.PATH }}:{{ go_bin_path }}"
-          GOPATH: "{{ ansible_env.HOME }}/go"
-          GOBIN: "{{ ansible_env.HOME }}/go/bin"
-      become_user: "{{ ansible_env.USER }}"
-      ignore_errors: yes  # If go is not installed, this will allow the playbook to continue
-
-    - name: Run pdtm -install-all to install all dependencies
-      ansible.builtin.command:
-        cmd: "{{ ansible_env.HOME }}/go/bin/pdtm -install-all"
-      become_user: "{{ ansible_env.USER }}"
+    - name: Install Go tools using 'go install'
+      ansible.builtin.shell:  # Use 'shell' module instead of 'command' for complex commands
+        cmd: "{{ go_bin_path }}/go install -v {{ item }}"
       environment:
-        PATH: "{{ ansible_env.PATH }}:{{ ansible_env.HOME }}/go/bin"
+       
