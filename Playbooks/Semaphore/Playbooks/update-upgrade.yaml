@@ -11,7 +11,7 @@
 
     - name: Upgrade all packages to the latest version
       ansible.builtin.apt:
-        upgrade: dist
+        upgrade: yes
       become: true 
 
     - name: Remove unnecessary packages and dependencies
