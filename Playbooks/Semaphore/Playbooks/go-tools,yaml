@@ -1,0 +1,43 @@
+---
+- name: Install multiple Go tools
+  hosts: dev
+  become: no  # Go install typically does not require elevated privileges
+  vars:
+    go_packages:
+      - "github.com/projectdiscovery/pdtm/cmd/pdtm@latest"
+      - "github.com/tomnomnom/anew@latest"
+      - "github.com/tomnomnom/gron@latest"
+      - "github.com/d3mondev/puredns/v2@latest"
+      - "github.com/hueristiq/xurlfind3r/cmd/xurlfind3r@latest"
+      - "github.com/owasp-amass/amass/v4/...@master"
+      - "github.com/ffuf/ffuf/v2@latest"
+      - "github.com/hakluke/hakrawler@latest"
+      - "github.com/OJ/gobuster/v3@latest"
+      - "github.com/tomnomnom/assetfinder@latest"
+      - "github.com/lc/gau/v2/cmd/gau@latest"
+      - "github.com/tomnomnom/waybackurls@latest"
+      - "github.com/jaeles-project/gospider@latest"
+      - "github.com/dwisiswant0/cf-check@latest"
+      - "github.com/devanshbatham/realm@v0.0.2"
+      - "github.com/channyein1337/jsleak@latest"
+      - "github.com/LukaSikic/subzy@latest"
+    go_bin_path: "/usr/local/go/bin"  # Adjust if you have a custom location for Go binaries
+
+  tasks:
+    - name: Install Go tools
+      ansible.builtin.command:
+        cmd: "{{ go_bin_path }}/go install -v {{ item }}"
+        environment:
+          PATH: "{{ ansible_env.PATH }}:{{ go_bin_path }}"
+          GOPATH: "{{ ansible_env.HOME }}/go"
+          GOBIN: "{{ ansible_env.HOME }}/go/bin"
+      loop: "{{ go_packages }}"
+      become_user: "{{ ansible_env.USER }}"
+      ignore_errors: no  # Continue on errors, adjust as needed
+
+    - name: Install Project Discovery Tools
+      ansible.builtin.command:
+        cmd: "{{ ansible_env.HOME }}/go/bin/pdtm -install-all"
+      become_user: "{{ ansible_env.USER }}"
+      environment:
+        PATH: "{{ ansible_env.PATH }}:{{ ansible_env.HOME }}/go/bin"
