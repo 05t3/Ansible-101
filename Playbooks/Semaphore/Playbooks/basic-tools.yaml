@@ -23,4 +23,5 @@
           - tmux
           - openssh-server
           - wget
+          - cmake
         state: present
