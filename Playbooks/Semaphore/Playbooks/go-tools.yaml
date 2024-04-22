@@ -1,6 +1,6 @@
 ---
 - name: Install multiple Go tools and run pdtm
-  hosts: all
+  hosts: dev
   become: no  # Go install typically does not require elevated privileges
   vars:
     go_bin_path: "/usr/local/go/bin"  # Adjust if you have a custom location for Go binaries
