@@ -1,7 +1,6 @@
 ---
 - name: Install and start Apache
   hosts: vagrant
-  become_user: semaphore
   become: yes  # Use sudo for privilege escalation
   tasks:
     - name: Install Apache web server
