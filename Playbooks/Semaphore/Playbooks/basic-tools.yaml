@@ -6,7 +6,7 @@
     - name: Update apt cache
       apt:
         update_cache: yes
-        cache_valid_time: 86400  # Optional: this line makes sure the cache is only updated if older than a day
+        cache_valid_time: 86400  
 
     - name: Installing Basic Tools
       apt:
@@ -21,4 +21,6 @@
           - htop
           - curl
           - tmux
-        state: present  # Ensures the packages are installed, can be changed to 'latest' to ensure the latest version
+          - openssh-server
+          - wget
+        state: present
