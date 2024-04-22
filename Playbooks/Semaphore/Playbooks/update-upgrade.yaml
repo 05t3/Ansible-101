@@ -1,6 +1,6 @@
 ---
 - name: Update and upgrade all Ubuntu servers
-  hosts: all
+  hosts: vagrant
   become: yes
   tasks:
     - name: Ensure the apt cache is updated
