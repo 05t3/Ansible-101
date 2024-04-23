@@ -29,9 +29,12 @@
         update_cache: yes
         cache_valid_time: 86400  
 
-    - name: Installing Basic Tools
-      apt:
-        name:
+    - name: Install required packages
+      ansible.builtin.apt:
+        name: "{{ packages }}"
+        state: latest
+      vars:
+        packages:
           - git
           - vim
           - nano
@@ -54,7 +57,9 @@
           - python3
           - python3-pip
           - openssl
-        state: present
+      register: install_packages
+      until: install_packages is succeeded
+
 
     - name: Clone SecLists repository
       ansible.builtin.git:
