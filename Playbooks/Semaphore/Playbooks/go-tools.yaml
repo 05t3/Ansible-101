@@ -23,6 +23,25 @@
       # - "github.com/channyein1337/jsleak@latest"
       # - "github.com/LukaSikic/subzy@latest"
       - "github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
+      - "github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest"
+      - "github.com/projectdiscovery/notify/cmd/notify@latest"
+      - "github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest"
+      - "github.com/projectdiscovery/chaos-client/cmd/chaos@latest"
+      - "github.com/projectdiscovery/aix/cmd/aix@latest"
+      - "github.com/projectdiscovery/uncover/cmd/uncover@latest"
+      - "github.com/projectdiscovery/asnmap/cmd/asnmap@latest"
+      - "github.com/projectdiscovery/cdncheck/cmd/cdncheck@latest"
+      - "github.com/projectdiscovery/naabu/v2/cmd/naabu@latest"
+      - "github.com/projectdiscovery/katana/cmd/katana@latest"
+      - "github.com/projectdiscovery/cvemap/cmd/cvemap@latest"
+      - "github.com/projectdiscovery/httpx/cmd/httpx@latest"
+      - "github.com/projectdiscovery/proxify/cmd/proxify@latest"
+      - "github.com/projectdiscovery/alterx/cmd/alterx@latest"
+      - "github.com/projectdiscovery/cloudlist/cmd/cloudlist@latest"
+      - "github.com/projectdiscovery/tlsx/cmd/tlsx@latest"
+      - "github.com/projectdiscovery/dnsx/cmd/dnsx@latest"
+      - "github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest"
+      - "github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest"
   tasks:
 
     - name: Update apt cache
@@ -88,6 +107,32 @@
     #     path: '/tmp/findomain-linux-i386.zip'
     #     state: absent
 
+
+    - name: Clone MassDNS repository
+      git:
+        repo: https://github.com/blechschmidt/massdns.git
+        dest: /opt/massdns
+      register: git_clone
+
+    - name: Ensure MassDNS is cloned
+      assert:
+        that:
+          - git_clone is succeeded
+
+    - name: Change directory to MassDNS
+      shell: cd /opt/massdns
+
+    - name: Compile MassDNS
+      shell: make
+      args:
+        chdir: /opt/massdns
+
+    - name: Copy MassDNS binary to /usr/bin
+      copy:
+        src: /opt/massdns/bin/massdns
+        dest: /usr/bin/massdns
+        mode: 0755
+
     - name: Upgrade pip to the latest version
       ansible.builtin.pip:
         name: pip
@@ -101,10 +146,10 @@
         - arjun
         # - wfuzz
 
-    - name: Clone SecLists repository
-      ansible.builtin.git:
-        repo: 'https://github.com/danielmiessler/SecLists.git'
-        dest: '/opt/SecLists'
+    # - name: Clone SecLists repository
+    #   ansible.builtin.git:
+    #     repo: 'https://github.com/danielmiessler/SecLists.git'
+    #     dest: '/opt/SecLists'
 
     - name: Install Go packages
       ansible.builtin.command:
