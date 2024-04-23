@@ -62,32 +62,31 @@
         dest: '/opt/SecLists'
         depth: 1
 
-
     - name: Download findomain
       ansible.builtin.get_url:
-      url: 'https://github.com/findomain/findomain/releases/latest/download/findomain-linux-i386.zip'
-      dest: '/tmp/findomain-linux-i386.zip'
+        url: 'https://github.com/findomain/findomain/releases/latest/download/findomain-linux-i386.zip'
+        dest: '/tmp/findomain-linux-i386.zip'
 
     - name: Unzip findomain
       ansible.builtin.unarchive:
-      src: '/tmp/findomain-linux-i386.zip'
-      dest: '/tmp/'
-      remote_src: yes
-      creates: '/tmp/findomain'
+        src: '/tmp/findomain-linux-i386.zip'
+        dest: '/tmp/'
+        remote_src: yes
+        creates: '/tmp/findomain'
 
     - name: Set execute permission on findomain
       ansible.builtin.file:
-      path: '/tmp/findomain'
-      mode: '0755'
+        path: '/tmp/findomain'
+        mode: '0755'
 
     - name: Move findomain to /usr/bin/
       ansible.builtin.command:
-      cmd: 'mv /tmp/findomain /usr/bin/findomain'
+        cmd: 'mv /tmp/findomain /usr/bin/findomain'
 
     - name: Remove the findomain zip file
       ansible.builtin.file:
-      path: '/tmp/findomain-linux-i386.zip'
-      state: absent
+        path: '/tmp/findomain-linux-i386.zip'
+        state: absent
 
     - name: Install pip packages
       ansible.builtin.pip:
