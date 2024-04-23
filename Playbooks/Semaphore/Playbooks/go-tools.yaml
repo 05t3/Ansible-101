@@ -5,7 +5,7 @@
   vars:
     go_bin_path: "/usr/local/bin"  # Correct path to the Go binary
     go_packages:
-      # - "github.com/projectdiscovery/pdtm/cmd/pdtm@latest"
+      - "github.com/projectdiscovery/pdtm/cmd/pdtm@latest"
       # - "github.com/owasp-amass/amass/v4/...@master"
       # - "github.com/tomnomnom/anew@latest"
       # - "github.com/tomnomnom/gron@latest"
@@ -22,6 +22,7 @@
       # - "github.com/devanshbatham/realm@v0.0.2"
       # - "github.com/channyein1337/jsleak@latest"
       # - "github.com/LukaSikic/subzy@latest"
+      - "github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
   tasks:
 
     - name: Update apt cache
@@ -61,31 +62,36 @@
       register: install_packages
       until: install_packages is succeeded
 
-    - name: Download findomain
-      ansible.builtin.get_url:
-        url: 'https://github.com/findomain/findomain/releases/latest/download/findomain-linux-i386.zip'
-        dest: '/tmp/findomain-linux-i386.zip'
+    # - name: Download findomain
+    #   ansible.builtin.get_url:
+    #     url: 'https://github.com/findomain/findomain/releases/latest/download/findomain-linux-i386.zip'
+    #     dest: '/tmp/findomain-linux-i386.zip'
 
-    - name: Unzip findomain
-      ansible.builtin.unarchive:
-        src: '/tmp/findomain-linux-i386.zip'
-        dest: '/tmp/'
-        remote_src: yes
-        creates: '/tmp/findomain'
+    # - name: Unzip findomain
+    #   ansible.builtin.unarchive:
+    #     src: '/tmp/findomain-linux-i386.zip'
+    #     dest: '/tmp/'
+    #     remote_src: yes
+    #     creates: '/tmp/findomain'
 
-    - name: Set execute permission on findomain
-      ansible.builtin.file:
-        path: '/tmp/findomain'
-        mode: '0755'
+    # - name: Set execute permission on findomain
+    #   ansible.builtin.file:
+    #     path: '/tmp/findomain'
+    #     mode: '0755'
 
-    - name: Move findomain to /usr/bin/
-      ansible.builtin.command:
-        cmd: 'mv /tmp/findomain /usr/bin/findomain'
+    # - name: Move findomain to /usr/bin/
+    #   ansible.builtin.command:
+    #     cmd: 'mv /tmp/findomain /usr/bin/findomain'
 
-    - name: Remove the findomain zip file
-      ansible.builtin.file:
-        path: '/tmp/findomain-linux-i386.zip'
-        state: absent
+    # - name: Remove the findomain zip file
+    #   ansible.builtin.file:
+    #     path: '/tmp/findomain-linux-i386.zip'
+    #     state: absent
+
+    - name: Upgrade pip to the latest version
+      ansible.builtin.pip:
+        name: pip
+        state: latest
 
     - name: Install pip packages
       ansible.builtin.pip:
@@ -93,22 +99,22 @@
         state: latest
       loop:
         - arjun
-        - wfuzz
+        # - wfuzz
 
     - name: Clone SecLists repository
       ansible.builtin.git:
         repo: 'https://github.com/danielmiessler/SecLists.git'
         dest: '/opt/SecLists'
 
-    # - name: Install Go packages
-    #   ansible.builtin.command:
-    #     cmd: "{{ go_bin_path }}/go install -v {{ item }}"
-    #   environment:
-    #     GOPATH: "{{ ansible_env.HOME }}/go"
-    #     GOBIN: "{{ ansible_env.HOME }}/go/bin"
-    #     PATH: "{{ ansible_env.PATH }}:{{ go_bin_path }}"
-    #   loop: "{{ go_packages }}"
-    #   ignore_errors: yes  # Continue on errors, adjust as needed
+    - name: Install Go packages
+      ansible.builtin.command:
+        cmd: "{{ go_bin_path }}/go install -v {{ item }}"
+      environment:
+        GOPATH: "{{ ansible_env.HOME }}/go"
+        GOBIN: "{{ ansible_env.HOME }}/go/bin"
+        PATH: "{{ ansible_env.PATH }}:{{ go_bin_path }}"
+      loop: "{{ go_packages }}"
+      ignore_errors: yes  # Continue on errors, adjust as needed
 
     # - name: Run pdtm -install-all
     #   ansible.builtin.shell:
