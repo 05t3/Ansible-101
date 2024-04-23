@@ -120,10 +120,10 @@
         version: 'master'
 
     - name: Build massdns
-      ansible.builtin.make:
+      ansible.builtin.command:
         chdir: '/tmp/massdns'
-        target: ''
-
+        cmd: make
+        
     - name: Copy massdns binary to /usr/bin
       ansible.builtin.copy:
         src: '/tmp/massdns/bin/massdns'
