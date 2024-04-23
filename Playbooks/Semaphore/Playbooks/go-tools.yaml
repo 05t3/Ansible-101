@@ -24,10 +24,10 @@
     #   environment:
     #     PATH: "{{ ansible_env.PATH }}:{{ ansible_env.HOME }}/go/bin"
 
-    # - name: Update apt cache
-    #   apt:
-    #     update_cache: yes
-    #     cache_valid_time: 86400  
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 86400  
 
     - name: Installing Basic Tools
       apt:
