@@ -6,23 +6,7 @@
     go_bin_path: "/usr/local/bin"  # Correct path to the Go binary
     go_packages:
       - "github.com/projectdiscovery/pdtm/cmd/pdtm@latest"
-      - "github.com/projectdiscovery/pdtm/cmd/pdtm@latest"
-      - "github.com/tomnomnom/anew@latest"
-      - "github.com/tomnomnom/gron@latest"
-      - "github.com/d3mondev/puredns/v2@latest"
-      - "github.com/hueristiq/xurlfind3r/cmd/xurlfind3r@latest"
       - "github.com/owasp-amass/amass/v4/...@master"
-      - "github.com/ffuf/ffuf/v2@latest"
-      - "github.com/hakluke/hakrawler@latest"
-      - "github.com/OJ/gobuster/v3@latest"
-      - "github.com/tomnomnom/assetfinder@latest"
-      - "github.com/lc/gau/v2/cmd/gau@latest"
-      - "github.com/tomnomnom/waybackurls@latest"
-      - "github.com/jaeles-project/gospider@latest"
-      - "github.com/dwisiswant0/cf-check@latest"
-      - "github.com/devanshbatham/realm@v0.0.2"
-      - "github.com/channyein1337/jsleak@latest"
-      - "github.com/LukaSikic/subzy@latest"
   tasks:
     - name: Install Go packages
       ansible.builtin.command:
@@ -39,3 +23,77 @@
         cmd: "{{ ansible_env.HOME }}/go/bin/pdtm -install-all"
       environment:
         PATH: "{{ ansible_env.PATH }}:{{ ansible_env.HOME }}/go/bin"
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 86400  
+
+    - name: Installing Basic Tools
+      apt:
+        name:
+          - git
+          - vim
+          - nano
+          - net-tools
+          - mlocate
+          - zip
+          - unzip
+          - htop
+          - curl
+          - tmux
+          - openssh-server
+          - wget
+          - cmake
+          - libpcap-dev
+          - nmap
+          - cewl
+          - jq
+          - build-essential
+          - software-properties-common
+          - python3
+          - python3-pip
+          - openssl
+        state: present
+
+    - name: Clone SecLists repository
+      ansible.builtin.git:
+        repo: 'https://github.com/danielmiessler/SecLists.git'
+        dest: '/opt/SecLists'
+        depth: 1
+
+    - name: Install findomain
+      ansible.builtin.block:
+        - name: Download findomain
+          ansible.builtin.get_url:
+            url: 'https://github.com/findomain/findomain/releases/latest/download/findomain-linux-i386.zip'
+            dest: '/tmp/findomain-linux-i386.zip'
+
+        - name: Unzip findomain
+          ansible.builtin.unarchive:
+            src: '/tmp/findomain-linux-i386.zip'
+            dest: '/tmp/'
+            remote_src: yes
+            creates: '/tmp/findomain'
+
+        - name: Set execute permission on findomain
+          ansible.builtin.file:
+            path: '/tmp/findomain'
+            mode: '0755'
+
+        - name: Move findomain to /usr/bin/
+          ansible.builtin.command:
+            cmd: 'mv /tmp/findomain /usr/bin/findomain'
+
+        - name: Remove the findomain zip file
+          ansible.builtin.file:
+            path: '/tmp/findomain-linux-i386.zip'
+            state: absent
+
+    - name: Install pip packages
+      ansible.builtin.pip:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - arjun
+        - wfuzz
