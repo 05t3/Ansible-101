@@ -8,26 +8,26 @@
       - "github.com/projectdiscovery/pdtm/cmd/pdtm@latest"
       - "github.com/owasp-amass/amass/v4/...@master"
   tasks:
-    - name: Install Go packages
-      ansible.builtin.command:
-        cmd: "{{ go_bin_path }}/go install -v {{ item }}"
-      environment:
-        GOPATH: "{{ ansible_env.HOME }}/go"
-        GOBIN: "{{ ansible_env.HOME }}/go/bin"
-        PATH: "{{ ansible_env.PATH }}:{{ go_bin_path }}"
-      loop: "{{ go_packages }}"
-      ignore_errors: yes  # Continue on errors, adjust as needed
+    # - name: Install Go packages
+    #   ansible.builtin.command:
+    #     cmd: "{{ go_bin_path }}/go install -v {{ item }}"
+    #   environment:
+    #     GOPATH: "{{ ansible_env.HOME }}/go"
+    #     GOBIN: "{{ ansible_env.HOME }}/go/bin"
+    #     PATH: "{{ ansible_env.PATH }}:{{ go_bin_path }}"
+    #   loop: "{{ go_packages }}"
+    #   ignore_errors: yes  # Continue on errors, adjust as needed
 
-    - name: Run pdtm -install-all
-      ansible.builtin.shell:
-        cmd: "{{ ansible_env.HOME }}/go/bin/pdtm -install-all"
-      environment:
-        PATH: "{{ ansible_env.PATH }}:{{ ansible_env.HOME }}/go/bin"
+    # - name: Run pdtm -install-all
+    #   ansible.builtin.shell:
+    #     cmd: "{{ ansible_env.HOME }}/go/bin/pdtm -install-all"
+    #   environment:
+    #     PATH: "{{ ansible_env.PATH }}:{{ ansible_env.HOME }}/go/bin"
 
-    - name: Update apt cache
-      apt:
-        update_cache: yes
-        cache_valid_time: 86400  
+    # - name: Update apt cache
+    #   apt:
+    #     update_cache: yes
+    #     cache_valid_time: 86400  
 
     - name: Installing Basic Tools
       apt:
