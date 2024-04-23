@@ -30,6 +30,7 @@
         cache_valid_time: 86400  
 
     - name: Install required packages
+      become: yes  # This will instruct Ansible to use sudo for the tasks
       ansible.builtin.apt:
         name: "{{ packages }}"
         state: latest
