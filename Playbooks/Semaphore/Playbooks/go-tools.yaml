@@ -1,163 +1,148 @@
 ---
-- name: Install BugBounty Arsenal
-  hosts: test
+- name: Install multiple Go tools and run pdtm
+  hosts: dev
   become: yes  # Go install typically does not require elevated privileges
   vars:
-    go_version: "1.19"
-    go_tarball: "go{{ go_version }}.linux-amd64.tar.gz"
-    go_download_url: "https://go.dev/dl/{{ go_tarball }}"
     go_bin_path: "/usr/local/bin"  # Correct path to the Go binary
     go_packages:
-      - "github.com/projectdiscovery/pdtm/cmd/pdtm@latest"
-      - "github.com/owasp-amass/amass/v4/...@master"
-      - "github.com/tomnomnom/anew@latest"
-      - "github.com/tomnomnom/gron@latest"
-      - "github.com/d3mondev/puredns/v2@latest"
+      # - "github.com/projectdiscovery/pdtm/cmd/pdtm@latest"
+      # - "github.com/owasp-amass/amass/v4/...@master"
+      # - "github.com/tomnomnom/anew@latest"
+      # - "github.com/tomnomnom/gron@latest"
+      # - "github.com/d3mondev/puredns/v2@latest"
       - "github.com/hueristiq/xurlfind3r/cmd/xurlfind3r@latest"
-      - "github.com/ffuf/ffuf/v2@latest"
-      - "github.com/hakluke/hakrawler@latest"
-      - "github.com/OJ/gobuster/v3@latest"
-      - "github.com/tomnomnom/assetfinder@latest"
-      - "github.com/lc/gau/v2/cmd/gau@latest"
-      - "github.com/tomnomnom/waybackurls@latest"
-      - "github.com/jaeles-project/gospider@latest"
-      - "github.com/dwisiswant0/cf-check@latest"
-      - "github.com/devanshbatham/realm@v0.0.2"
-      - "github.com/channyein1337/jsleak@latest"
-      - "github.com/LukaSikic/subzy@latest"
-      - "github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
+      # - "github.com/ffuf/ffuf/v2@latest"
+      # - "github.com/hakluke/hakrawler@latest"
+      # - "github.com/OJ/gobuster/v3@latest"
+      # - "github.com/tomnomnom/assetfinder@latest"
+      # - "github.com/lc/gau/v2/cmd/gau@latest"
+      # - "github.com/tomnomnom/waybackurls@latest"
+      # - "github.com/jaeles-project/gospider@latest"
+      # - "github.com/dwisiswant0/cf-check@latest"
+      # - "github.com/devanshbatham/realm@v0.0.2"
+      # - "github.com/channyein1337/jsleak@latest"
+      # - "github.com/LukaSikic/subzy@latest"
+      # - "github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
+      # - "github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest"
+      # - "github.com/projectdiscovery/notify/cmd/notify@latest"
+      # - "github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest"
+      # - "github.com/projectdiscovery/chaos-client/cmd/chaos@latest"
+      # - "github.com/projectdiscovery/aix/cmd/aix@latest"
+      # - "github.com/projectdiscovery/uncover/cmd/uncover@latest"
+      # - "github.com/projectdiscovery/asnmap/cmd/asnmap@latest"
+      # - "github.com/projectdiscovery/cdncheck/cmd/cdncheck@latest"
+      # - "github.com/projectdiscovery/naabu/v2/cmd/naabu@latest"
+      # - "github.com/projectdiscovery/katana/cmd/katana@latest"
+      # - "github.com/projectdiscovery/cvemap/cmd/cvemap@latest"
+      # - "github.com/projectdiscovery/httpx/cmd/httpx@latest"
+      # - "github.com/projectdiscovery/proxify/cmd/proxify@latest"
+      # - "github.com/projectdiscovery/alterx/cmd/alterx@latest"
+      # - "github.com/projectdiscovery/cloudlist/cmd/cloudlist@latest"
+      # - "github.com/projectdiscovery/tlsx/cmd/tlsx@latest"
+      # - "github.com/projectdiscovery/dnsx/cmd/dnsx@latest"
+      # - "github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest"
+      # - "github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest"
   tasks:
 
-    - name: Download the Go tarball
-      ansible.builtin.get_url:
-        url: "{{ go_download_url }}"
-        dest: "/tmp/{{ go_tarball }}"
-        timeout: 60
-        force: true
+    # - name: Update apt cache
+    #   apt:
+    #     update_cache: yes
+    #     cache_valid_time: 86400  
 
-    - name: Remove existing Go installation
-      ansible.builtin.file:
-        path: /usr/local/go
-        state: absent
+    # - name: Install required packages
+    #   become: yes  # This will instruct Ansible to use sudo for the tasks
+    #   ansible.builtin.apt:
+    #     name: "{{ packages }}"
+    #     state: latest
+    #   vars:
+    #     packages:
+    #       - git
+    #       - vim
+    #       - nano
+    #       - net-tools
+    #       - mlocate
+    #       - zip
+    #       - unzip
+    #       - htop
+    #       - curl
+    #       - tmux
+    #       - openssh-server
+    #       - wget
+    #       - cmake
+    #       - libpcap-dev
+    #       - nmap
+    #       - cewl
+    #       - jq
+    #       - build-essential
+    #       - software-properties-common
+    #       - python3
+    #       - python3-pip
+    #       - openssl
+    #   register: install_packages
+    #   until: install_packages is succeeded
 
-    - name: Extract Go tarball
-      ansible.builtin.unarchive:
-        src: "/tmp/{{ go_tarball }}"
-        dest: /usr/local
-        extra_opts: [--strip-components=1]
-        creates: /usr/local/go/bin/go
-        remote_src: yes
+    # - name: Download findomain
+    #   ansible.builtin.get_url:
+    #     url: 'https://github.com/findomain/findomain/releases/latest/download/findomain-linux-i386.zip'
+    #     dest: '/tmp/findomain-linux-i386.zip'
 
-    - name: Set Go environment variables for all users
-      ansible.builtin.blockinfile:
-        path: /etc/profile.d/go.sh
-        block: |
-          export PATH=$PATH:/usr/local/go/bin
-          export PATH=$PATH:{{ ansible_env.HOME }}/go/bin
-        create: yes
-        marker: "# {mark} ANSIBLE MANAGED BLOCK for Go environment variables"
+    # - name: Unzip findomain
+    #   ansible.builtin.unarchive:
+    #     src: '/tmp/findomain-linux-i386.zip'
+    #     dest: '/tmp/'
+    #     remote_src: yes
+    #     creates: '/tmp/findomain'
 
-    - name: Check Go version
-      ansible.builtin.command: go version
-      register: go_version_output
+    # - name: Set execute permission on findomain
+    #   ansible.builtin.file:
+    #     path: '/tmp/findomain'
+    #     mode: '0755'
 
-    - name: Show Go version output
-      ansible.builtin.debug:
-        msg: "{{ go_version_output.stdout }}"
+    # - name: Move findomain to /usr/bin/
+    #   ansible.builtin.command:
+    #     cmd: 'mv /tmp/findomain /usr/bin/findomain'
+
+    # - name: Remove the findomain zip file
+    #   ansible.builtin.file:
+    #     path: '/tmp/findomain-linux-i386.zip'
+    #     state: absent
 
 
-    - name: Update apt cache
-      apt:
-        update_cache: yes
-        cache_valid_time: 86400  
+    # - name: Install required packages
+    #   ansible.builtin.apt:
+    #     name: git
+    #     state: latest
 
-    - name: Install required packages
-      become: yes  # This will instruct Ansible to use sudo for the tasks
-      ansible.builtin.apt:
-        name: "{{ packages }}"
-        state: latest
-      vars:
-        packages:
-          - git
-          - vim
-          - nano
-          - net-tools
-          - mlocate
-          - zip
-          - unzip
-          - htop
-          - curl
-          - tmux
-          - openssh-server
-          - wget
-          - cmake
-          - libpcap-dev
-          - nmap
-          - cewl
-          - jq
-          - build-essential
-          - software-properties-common
-          - python3
-          - python3-pip
-          - openssl
-      register: install_packages
-      until: install_packages is succeeded
+    # - name: Clone massdns repository
+    #   ansible.builtin.git:
+    #     repo: 'https://github.com/blechschmidt/massdns.git'
+    #     dest: '/tmp/massdns'
+    #     version: 'master'
 
-    - name: Download findomain
-      ansible.builtin.get_url:
-        url: 'https://github.com/findomain/findomain/releases/latest/download/findomain-linux-i386.zip'
-        dest: '/tmp/findomain-linux-i386.zip'
-
-    - name: Unzip findomain
-      ansible.builtin.unarchive:
-        src: '/tmp/findomain-linux-i386.zip'
-        dest: '/tmp/'
-        remote_src: yes
-        creates: '/tmp/findomain'
-
-    - name: Set execute permission on findomain
-      ansible.builtin.file:
-        path: '/tmp/findomain'
-        mode: '0755'
-
-    - name: Move findomain to /usr/bin/
-      ansible.builtin.command:
-        cmd: 'mv /tmp/findomain /usr/bin/findomain'
-
-    - name: Remove the findomain zip file
-      ansible.builtin.file:
-        path: '/tmp/findomain-linux-i386.zip'
-        state: absent
-
-    - name: Clone massdns repository
-      ansible.builtin.git:
-        repo: 'https://github.com/blechschmidt/massdns.git'
-        dest: '/tmp/massdns'
-        version: 'master'
-
-    - name: Build massdns
-      ansible.builtin.command:
-        chdir: '/tmp/massdns'
-        cmd: make
+    # - name: Build massdns
+    #   ansible.builtin.command:
+    #     chdir: '/tmp/massdns'
+    #     cmd: make
         
-    - name: Copy massdns binary to /usr/bin
-      ansible.builtin.copy:
-        src: '/tmp/massdns/bin/massdns'
-        dest: '/usr/bin/massdns'
-        remote_src: yes
-        mode: '0755'
+    # - name: Copy massdns binary to /usr/bin
+    #   ansible.builtin.copy:
+    #     src: '/tmp/massdns/bin/massdns'
+    #     dest: '/usr/bin/massdns'
+    #     remote_src: yes
+    #     mode: '0755'
 
-    - name: Upgrade pip to the latest version
-      ansible.builtin.pip:
-        name: pip
-        state: latest
+    # - name: Upgrade pip to the latest version
+    #   ansible.builtin.pip:
+    #     name: pip
+    #     state: latest
 
-    - name: Install pip packages
-      ansible.builtin.pip:
-        name: "{{ item }}"
-        state: latest
-      loop:
-        - arjun
+    # - name: Install pip packages
+    #   ansible.builtin.pip:
+    #     name: "{{ item }}"
+    #     state: latest
+    #   loop:
+    #     - arjun
+        # - wfuzz
 
     # - name: Clone SecLists repository
     #   ansible.builtin.git:
@@ -179,3 +164,33 @@
         cmd: "{{ ansible_env.HOME }}/go/bin/pdtm -install-all"
       environment:
         PATH: "{{ ansible_env.PATH }}:{{ ansible_env.HOME }}/go/bin"
+
+    - name: Find Go binaries
+      ansible.builtin.find:
+        paths: "{{ ansible_env.HOME }}/go/bin"
+        file_type: file
+      register: go_binaries
+
+    - name: Move Go binaries to /usr/local/bin
+      ansible.builtin.copy:
+        src: "{{ item.path }}"
+        dest: "/usr/local/bin/"
+        remote_src: yes
+        mode: '0755'  # This mode sets the binaries to be executable by anyone
+      loop: "{{ go_binaries.files }}"
+      when: go_binaries.matched > 0
+
+    - name: Find PDTM binaries
+      ansible.builtin.find:
+        paths: "{{ ansible_env.HOME }}/.pdtm/go/bin"
+        file_type: file
+      register: go_binaries
+
+    - name: Move Go binaries to /usr/local/bin
+      ansible.builtin.copy:
+        src: "{{ item.path }}"
+        dest: "/usr/local/bin/"
+        remote_src: yes
+        mode: '0755'  # This mode sets the binaries to be executable by anyone
+      loop: "{{ go_binaries.files }}"
+      when: go_binaries.matched > 0
