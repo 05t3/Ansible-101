@@ -24,4 +24,13 @@
           - openssh-server
           - wget
           - cmake
+          - libpcap-dev
+          - nmap
+          - cewl
+          - jq
+          - build-essential
+          - software-properties-common
+          - python3
+          - python3-pip
+          - openssl
         state: present
