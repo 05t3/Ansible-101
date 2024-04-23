@@ -113,16 +113,16 @@
     #     name: git
     #     state: latest
 
-    # - name: Clone massdns repository
-    #   ansible.builtin.git:
-    #     repo: 'https://github.com/blechschmidt/massdns.git'
-    #     dest: '/tmp/massdns'
-    #     version: 'master'
+    - name: Clone massdns repository
+      ansible.builtin.git:
+        repo: 'https://github.com/blechschmidt/massdns.git'
+        dest: '/tmp/massdns'
+        version: 'master'
 
-    # - name: Build massdns
-    #   ansible.builtin.make:
-    #     chdir: '/tmp/massdns'
-    #     target: ''
+    - name: Build massdns
+      ansible.builtin.make:
+        chdir: '/tmp/massdns'
+        target: ''
 
     - name: Copy massdns binary to /usr/bin
       ansible.builtin.copy:
