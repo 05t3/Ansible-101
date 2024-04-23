@@ -108,30 +108,28 @@
     #     state: absent
 
 
-    - name: Clone MassDNS repository
-      git:
-        repo: https://github.com/blechschmidt/massdns.git
-        dest: /opt/massdns
-      register: git_clone
+    - name: Install required packages
+      ansible.builtin.apt:
+        name: git
+        state: latest
 
-    - name: Ensure MassDNS is cloned
-      assert:
-        that:
-          - git_clone is succeeded
+    - name: Clone massdns repository
+      ansible.builtin.git:
+        repo: 'https://github.com/blechschmidt/massdns.git'
+        dest: '/tmp/massdns'
+        version: 'master'
 
-    - name: Change directory to MassDNS
-      shell: cd /opt/massdns
+    - name: Build massdns
+      ansible.builtin.make:
+        chdir: '/tmp/massdns'
+        target: ''
 
-    - name: Compile MassDNS
-      shell: make
-      args:
-        chdir: /opt/massdns
-
-    - name: Copy MassDNS binary to /usr/bin
-      copy:
-        src: /opt/massdns/bin/massdns
-        dest: /usr/bin/massdns
-        mode: 0755
+    - name: Copy massdns binary to /usr/bin
+      ansible.builtin.copy:
+        src: '/tmp/massdns/bin/massdns'
+        dest: '/usr/bin/massdns'
+        remote_src: yes
+        mode: '0755'
 
     - name: Upgrade pip to the latest version
       ansible.builtin.pip:
