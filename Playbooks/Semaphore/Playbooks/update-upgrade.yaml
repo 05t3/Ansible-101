@@ -1,6 +1,6 @@
 ---
 - name: Update and upgrade all Ubuntu servers
-  hosts: template
+  hosts: all
   become: yes
   tasks:
     - name: Ensure the apt cache is updated
