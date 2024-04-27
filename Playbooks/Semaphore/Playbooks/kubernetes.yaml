@@ -1,6 +1,6 @@
 ---
 - name: Install Kubernetes and Minikube
-  hosts: kube
+  hosts: control
   become: yes  # Use sudo for all tasks
 
   tasks:
