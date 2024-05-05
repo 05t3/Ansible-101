@@ -1,56 +1,56 @@
 ---
 - name: Install Kubernetes, Minikube, and Helm
-  hosts: control
+  hosts: workers
   become: yes  # Use sudo for all tasks
 
   tasks:
-    # - name: Get the latest stable version of Kubernetes
-    #   ansible.builtin.command: curl -L -s https://dl.k8s.io/release/stable.txt
-    #   register: k8s_version
-    #   changed_when: false
+    - name: Get the latest stable version of Kubernetes
+      ansible.builtin.command: curl -L -s https://dl.k8s.io/release/stable.txt
+      register: k8s_version
+      changed_when: false
 
-    # - name: Download kubectl
-    #   ansible.builtin.get_url:
-    #     url: "https://dl.k8s.io/release/{{ k8s_version.stdout }}/bin/linux/amd64/kubectl"
-    #     dest: "/tmp/kubectl"
-    #     mode: '0755'
+    - name: Download kubectl
+      ansible.builtin.get_url:
+        url: "https://dl.k8s.io/release/{{ k8s_version.stdout }}/bin/linux/amd64/kubectl"
+        dest: "/tmp/kubectl"
+        mode: '0755'
 
-    # - name: Install kubectl
-    #   ansible.builtin.copy:
-    #     src: "/tmp/kubectl"
-    #     dest: "/usr/local/bin/kubectl"
-    #     owner: root
-    #     group: root
-    #     mode: '0755'
-    #     remote_src: yes
+    - name: Install kubectl
+      ansible.builtin.copy:
+        src: "/tmp/kubectl"
+        dest: "/usr/local/bin/kubectl"
+        owner: root
+        group: root
+        mode: '0755'
+        remote_src: yes
 
-    # - name: Download Minikube
-    #   ansible.builtin.get_url:
-    #     url: "https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64"
-    #     dest: "/tmp/minikube-linux-amd64"
-    #     mode: '0755'
+    - name: Download Minikube
+      ansible.builtin.get_url:
+        url: "https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64"
+        dest: "/tmp/minikube-linux-amd64"
+        mode: '0755'
 
-    # - name: Install Minikube
-    #   ansible.builtin.copy:
-    #     src: "/tmp/minikube-linux-amd64"
-    #     dest: "/usr/local/bin/minikube"
-    #     owner: root
-    #     group: root
-    #     mode: '0755'
-    #     remote_src: yes
+    - name: Install Minikube
+      ansible.builtin.copy:
+        src: "/tmp/minikube-linux-amd64"
+        dest: "/usr/local/bin/minikube"
+        owner: root
+        group: root
+        mode: '0755'
+        remote_src: yes
 
-    # - name: Remove the downloaded Minikube executable
-    #   ansible.builtin.file:
-    #     path: "/tmp/minikube-linux-amd64"
-    #     state: absent
+    - name: Remove the downloaded Minikube executable
+      ansible.builtin.file:
+        path: "/tmp/minikube-linux-amd64"
+        state: absent
 
-    # - name: Install Helm
-    #   ansible.builtin.shell: |
-    #     curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-    #     chmod 700 get_helm.sh
-    #     ./get_helm.sh
-    #   args:
-    #     creates: /usr/local/bin/helm
+    - name: Install Helm
+      ansible.builtin.shell: |
+        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+      # args:
+      #   creates: /usr/local/bin/helm
 
     - name: Start Minikube
       ansible.builtin.shell: minikube start --driver=docker --force
