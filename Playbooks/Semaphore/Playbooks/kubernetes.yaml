@@ -53,7 +53,7 @@
     #     creates: /usr/local/bin/helm
 
     - name: Start Minikube
-      ansible.builtin.shell: minikube start --driver=docker
+      ansible.builtin.shell: minikube start --driver=docker --force
       environment:
         MINIKUBE_IN_STYLE: "false"
         CHANGE_MINIKUBE_NONE_USER: "true"
