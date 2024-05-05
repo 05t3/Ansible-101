@@ -1,5 +1,5 @@
 ---
-- name: Install Kubernetes and Minikube
+- name: Install Kubernetes, Minikube, and Helm
   hosts: control
   become: yes  # Use sudo for all tasks
 
@@ -43,3 +43,18 @@
       ansible.builtin.file:
         path: "/tmp/minikube-linux-amd64"
         state: absent
+
+    - name: Install Helm
+      ansible.builtin.shell: |
+        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+      args:
+        creates: /usr/local/bin/helm
+
+    - name: Start Minikube
+      ansible.builtin.shell: minikube start --force
+      environment:
+        MINIKUBE_IN_STYLE: "false"
+        CHANGE_MINIKUBE_NONE_USER: "true"
+      become: yes
