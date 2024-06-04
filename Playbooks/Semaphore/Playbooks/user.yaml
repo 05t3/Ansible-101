@@ -1,6 +1,6 @@
 ---
 - name: Create a new system user with SSH access
-  hosts: all
+  hosts: workers
   become: yes  # Use sudo for privilege escalation
   vars:
     username: semaphore  # Define the username variable
