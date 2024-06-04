@@ -14,7 +14,7 @@
         shell: /bin/bash
         create_home: yes
         home: "/home/{{ username }}"
-      become_user: oste
+
     - name: Set up .ssh directory for the user
       ansible.builtin.file:
         path: "/home/{{ username }}/.ssh"
