@@ -1,6 +1,6 @@
 ---
 - name: Ping all hosts
-  hosts: worker
+  hosts: workers
   gather_facts: no
 
   tasks:
